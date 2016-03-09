@@ -8,7 +8,8 @@ from questions.models import Question
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Question
-        fields = ('body',)
+        fields = ('pk', 'name', 'intro', 'body', 'success_message',
+                  'fail_message')
 
 
 # ViewSets define the view behavior.
