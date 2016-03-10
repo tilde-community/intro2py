@@ -17,7 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from .api import router
-from .views import register_user
+from .views import register_user, deactivate
 
 
 urlpatterns = [
@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls',
         namespace='rest_framework')),
     url(r'^register/', register_user, name='register'),
+    url(r'^deactivate/', deactivate, name='deactivate'),
 ]
