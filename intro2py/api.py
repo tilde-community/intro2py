@@ -24,15 +24,31 @@ class QuestionViewSet(viewsets.ModelViewSet):
 class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Activity
-        fields = ('when', 'text', 'kind')
+        fields = ('pk', 'when', 'text', 'kind')
 
 
 class ActivityViewSet(viewsets.ModelViewSet):
-    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('kind', 'text', 'when')
-    ordering_fields = '__all__'
-    queryset = Activity.objects.all()
+    # filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
+    # filter_fields = ('kind', 'text', 'when')
+    # ordering_fields = '__all__'
+    # queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
+
+    def get_queryset(self):
+        queryset = Activity.objects.all()
+        pk__gt = self.request.query_params.get('pk__gt', None)
+        text = self.request.query_params.get('text', None)
+        kind = self.request.query_params.get('kind', None)
+        top = self.request.query_params.get('top', None)
+        bottom = self.request.query_params.get('bottom', None)
+        print pk__gt, top, bottom
+        if filters is not None:
+            queryset = queryset.filter(pk__gt=int(pk__gt))
+        if text:
+            queryset = queryset.filter(text__icontains=text)
+        if kind:
+            queryset = queryset.filter(kind__icontains=kind)
+        return queryset[top: bottom]
 
 
 class ActivityListView(generics.ListAPIView):
@@ -59,4 +75,4 @@ class UserListView(generics.ListAPIView):
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'questions', QuestionViewSet)
-router.register(r'activities', ActivityViewSet)
+router.register(r'activities', ActivityViewSet, base_name='activities')
